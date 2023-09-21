@@ -5,9 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Title</title>
     <link rel="stylesheet" href="./styles/main.scss">
+    <style>
+      body {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+          overflow-y: auto;
+      }
+
+      .div-container {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-top: 40px;
+          gap: 5px;
+      }
+
+      .div {
+          width: 100px;
+          height: 100px;
+          background-color: lightblue;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+      }
+    </style>
   </head>
   <body>
-    <h1>Hello Mate Academy</h1>
-    <script type="text/javascript" src="scripts/main.js"></script>
+    <div class="div-container"></div>
+    <script>
+      function moveToTop(div, container, selectedDivs) {
+        const currentIndex = Array.from(container.children).indexOf(div);
+
+        if (!selectedDivs.includes(div)) {
+          selectedDivs.push(div);
+          div.dataset.originalPosition = currentIndex;
+        }
+
+        container.prepend(div);
+      }
+
+      function returnToOriginalPosition(div, container, selectedDivs) {
+        if (selectedDivs.includes(div)) {
+          const originalPosition = div.dataset.originalPosition;
+          container.insertBefore(div, container.children[originalPosition]);
+          selectedDivs.splice(selectedDivs.indexOf(div), 1);
+          delete div.dataset.originalPosition;
+        }
+      }
+
+      const selectedDivs = [];
+
+      function createDiv(index) {
+        const div = document.createElement('div');
+        div.textContent = `div${index + 1}`;
+        div.classList.add('div');
+        div.addEventListener('click', () => {
+          if (selectedDivs.includes(div)) {
+            returnToOriginalPosition(div, divContainer, selectedDivs);
+          } else {
+            moveToTop(div, divContainer, selectedDivs);
+          }
+        });
+        return div;
+      }
+
+      const divContainer = document.querySelector('.div-container');
+
+      for (let i = 0; i < 100; i++) {
+        const newDiv = createDiv(i);
+        divContainer.appendChild(newDiv);
+      }
+    </script>
   </body>
 </html>
